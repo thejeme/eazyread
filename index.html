@@ -4,10 +4,33 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Generate text that is eazily readable" />
+  <meta name="description" content="Generate text that is easily readable" />
   <meta name="keywords" content="EazyRead, Text, Eazy, Read" />
   <meta name="author" content="Eemeli Mark" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="application-name" content="EazyRead" />
+  <meta name="apple-mobile-web-app-title" content="EazyRead" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta property="og:title" content="EazyRead" />
+  <meta property="og:description" content="Generate text that is easily readable" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thejeme.github.io/eazyread/" />
+  <meta property="og:site_name" content="EazyRead" />
+  <meta property="og:image" content="https://thejeme.github.io/eazyread/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="EazyRead preview image" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="EazyRead" />
+  <meta name="twitter:description" content="Generate text that is easily readable" />
+  <meta name="twitter:image" content="https://thejeme.github.io/eazyread/og-image.png" />
+  <link rel="canonical" href="https://thejeme.github.io/eazyread/" />
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?" />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="site.webmanifest" />
   <title>EazyRead</title>
   <link href="style.css" rel="stylesheet" />
 </head>
@@ -25,7 +48,7 @@
     <div id="settings">
       <h2>Settings</h2>
       <div class="settings-item">
-        <label>Font size</label>
+        <label for="font-size-select">Font size</label>
         <select id="font-size-select">
           <option value="1">1</option>
           <option value="2">2</option>
@@ -40,7 +63,7 @@
         </select>
       </div>
       <div class="settings-item">
-        <label>Letter spacing</label>
+        <label for="letter-spacing-select">Letter spacing</label>
         <select id="letter-spacing-select">
           <option value="1">1</option>
           <option value="2">2</option>
@@ -55,7 +78,7 @@
         </select>
       </div>
       <div class="settings-item">
-        <label>Bolding</label>
+        <label for="bolding-select">Bolding</label>
         <select id="bolding-select">
           <option value="1" selected>Enabled</option>
           <option value="0">Disabled</option>
@@ -142,6 +165,12 @@
         boldCharCount
       )} `;
       targetText.appendChild(element);
+    });
+  }
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
     });
   }
 </script>

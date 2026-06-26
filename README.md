@@ -1,2 +1,3 @@
-# eazyread
-Generate text that is eazily readable
+# EazyRead
+
+Generate text that is easily readable in browser.
