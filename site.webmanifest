@@ -1,19 +1,16 @@
 {
   "name": "EazyRead",
   "short_name": "EazyRead",
-  "description": "Generate text that is easily readable",
+  "description": "Make text and documents easier to read, privately in your browser.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#eeeeee",
-  "theme_color": "#ffffff",
+  "background_color": "#f6f7f4",
+  "theme_color": "#f6f7f4",
   "orientation": "any",
   "lang": "en",
   "dir": "ltr",
-  "categories": [
-    "productivity",
-    "utilities"
-  ],
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "icon-192.png",

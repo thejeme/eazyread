@@ -1,178 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Generate text that is easily readable" />
-  <meta name="keywords" content="EazyRead, Text, Eazy, Read" />
-  <meta name="author" content="Eemeli Mark" />
-  <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#ffffff" />
-  <meta name="application-name" content="EazyRead" />
-  <meta name="apple-mobile-web-app-title" content="EazyRead" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta property="og:title" content="EazyRead" />
-  <meta property="og:description" content="Generate text that is easily readable" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://thejeme.github.io/eazyread/" />
-  <meta property="og:site_name" content="EazyRead" />
-  <meta property="og:image" content="https://thejeme.github.io/eazyread/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="EazyRead preview image" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="EazyRead" />
-  <meta name="twitter:description" content="Generate text that is easily readable" />
-  <meta name="twitter:image" content="https://thejeme.github.io/eazyread/og-image.png" />
-  <link rel="canonical" href="https://thejeme.github.io/eazyread/" />
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?" />
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="manifest" href="site.webmanifest" />
-  <title>EazyRead</title>
-  <link href="style.css" rel="stylesheet" />
-</head>
-
-<body>
-  <div class="title">
-    <h1 class="title-text-1">EAZY</h1>
-    <h1 class="title-text-2">READ</h1>
-  </div>
-  <div class="main" id="generate">
-    <textarea id="textarea" placeholder="Enter text."></textarea>
-    <button id="generate-button">Generate</button>
-  </div>
-  <div class="main" id="target">
-    <div id="settings">
-      <h2>Settings</h2>
-      <div class="settings-item">
-        <label for="font-size-select">Font size</label>
-        <select id="font-size-select">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
-      </div>
-      <div class="settings-item">
-        <label for="letter-spacing-select">Letter spacing</label>
-        <select id="letter-spacing-select">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
-      </div>
-      <div class="settings-item">
-        <label for="bolding-select">Bolding</label>
-        <select id="bolding-select">
-          <option value="1" selected>Enabled</option>
-          <option value="0">Disabled</option>
-        </select>
-      </div>
-    </div>
-    <div class="buttons">
-      <button id="target-button">Back</button>
-      <button id="settings-button">Settings</button>
-    </div>
-    <div id="target-text"></div>
-  </div>
-</body>
-
-<script src="html2canvas.min.js"></script>
-<script src="jspdf.umd.min.js"></script>
-<script>
-  const textarea = document.getElementById("textarea");
-
-  const generateButton = document.getElementById("generate-button");
-  const targetButton = document.getElementById("target-button");
-  const settingsButton = document.getElementById("settings-button");
-
-  const fontSizeSelect = document.getElementById("font-size-select");
-  const letterSpacingSelect = document.getElementById(
-    "letter-spacing-select"
-  );
-  const boldingSelect = document.getElementById("bolding-select");
-
-  const generateDiv = document.getElementById("generate");
-  const targetDiv = document.getElementById("target");
-  const settingsDiv = document.getElementById("settings");
-
-  const targetText = document.getElementById("target-text");
-
-  generateButton.addEventListener("click", () => {
-    if (textarea.value === "") {
-      return;
-    }
-
-    setBoldingText();
-
-    generateDiv.style.display = "none";
-    targetDiv.style.display = "block";
-  });
-
-  targetButton.addEventListener("click", () => {
-    generateDiv.style.display = "block";
-    targetDiv.style.display = "none";
-  });
-
-  settingsButton.addEventListener("click", () => {
-    if (settingsDiv.style.display === "block") {
-      settingsDiv.style.display = "none";
-    } else {
-      settingsDiv.style.display = "block";
-    }
-  });
-
-  fontSizeSelect.addEventListener("change", () => {
-    targetText.style.fontSize = `${10 + fontSizeSelect.value * 5}px`;
-  });
-
-  letterSpacingSelect.addEventListener("change", () => {
-    targetText.style.letterSpacing = `${letterSpacingSelect.value / 5 - 0.2
-      }px`;
-  });
-
-  boldingSelect.addEventListener("change", () => {
-    if (boldingSelect.value === "1") {
-      setBoldingText();
-    } else {
-      targetText.innerHTML = textarea.value;
-    }
-  });
-
-  function setBoldingText() {
-    targetText.innerHTML = "";
-    const words = textarea.value.split(" ");
-    words.forEach((word) => {
-      const boldCharCount = Math.ceil(word.length / 3);
-      const element = document.createElement("span");
-      element.innerHTML = `<b>${word.slice(0, boldCharCount)}</b>${word.slice(
-        boldCharCount
-      )} `;
-      targetText.appendChild(element);
-    });
-  }
-
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js").catch(() => {});
-    });
-  }
-</script>
-
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A little less effort. A little more reading. Turn text and documents into an easier reading experience, privately in your browser."
+    />
+    <meta name="theme-color" content="#f6f7f4" />
+    <meta name="application-name" content="EazyRead" />
+    <meta name="apple-mobile-web-app-title" content="EazyRead" />
+    <meta property="og:title" content="EazyRead" />
+    <meta
+      property="og:description"
+      content="Make text and documents easier to read. Free, private, and simple."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thejeme.github.io/eazyread/" />
+    <meta
+      property="og:image"
+      content="https://thejeme.github.io/eazyread/og-image.png"
+    />
+    <link rel="canonical" href="https://thejeme.github.io/eazyread/" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <title>EazyRead — Find your reading rhythm</title>
+    <script type="module" src="assets/app.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="./" aria-label="EazyRead home"
+        ><b>eazy</b>read<span aria-hidden="true">.</span></a
+      >
+      <span class="header-note"
+        >A little less effort. A little more reading.</span
+      >
+      <span class="privacy"
+        ><span aria-hidden="true">◉</span> Stays on your device</span
+      >
+    </header>
+    <main>
+      <section id="generate" class="input-view" aria-labelledby="intro-title">
+        <div class="intro">
+          <p class="eyebrow">YOUR WORDS, A LITTLE CLEARER</p>
+          <h1 id="intro-title">Find your<br />reading rhythm<span>.</span></h1>
+          <p>
+            Give your eyes a place to land. Turn everyday text and documents
+            into a calmer, more comfortable read.
+          </p>
+        </div>
+        <div class="input-card">
+          <div class="card-heading">
+            <label for="textarea">Start with your words</label
+            ><button id="sample-button" class="text-button" type="button">
+              Try an example <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          <textarea
+            id="textarea"
+            placeholder="Paste something you’d like to read…"
+            spellcheck="false"
+            aria-describedby="input-count"
+          ></textarea>
+          <div class="input-bottom">
+            <span id="input-count" class="muted">Or open a document below</span
+            ><button id="generate-button" class="primary" type="button">
+              Make it easier <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div class="divider"><span>or bring a file</span></div>
+          <label class="dropzone" id="dropzone" for="file-input"
+            ><span class="upload-icon" aria-hidden="true">↥</span
+            ><span
+              ><strong>Choose a file</strong>
+              <span class="drop-hint">or drop it here</span
+              ><small
+                >PDF, Word, EPUB, ODT, RTF, Markdown, HTML & more · up to 25
+                MB</small
+              ></span
+            ><input
+              type="file"
+              id="file-input"
+              accept=".pdf,.docx,.epub,.odt,.rtf,.html,.htm,.xhtml,.md,.markdown,.txt,.text,.log,.csv,.tsv,.json,.xml,.yaml,.yml,.tex,.srt,.vtt"
+          /></label>
+          <details class="format-details">
+            <summary>Supported formats & downloads</summary>
+            <p>
+              <b>Formatted documents:</b> PDF, DOCX, EPUB, ODT, RTF, HTML, HTM,
+              XHTML. Download a reading edition in the same format. PDFs and RTF
+              are reflowed; Word and ebooks retain their structure.
+            </p>
+            <p>
+              <b>Text & data:</b> TXT, TEXT, Markdown (MD, MARKDOWN), LOG, CSV,
+              TSV, JSON, XML, YAML, YML, TEX, SRT, VTT. Original-format
+              downloads keep their text and syntax intact. Choose HTML or PDF to
+              save reading styles.
+            </p>
+            <p>
+              Scanned PDFs need OCR first. Legacy .doc files should be saved as
+              .docx. Password-protected files are not supported.
+            </p>
+          </details>
+        </div>
+        <div class="benefits">
+          <span><b aria-hidden="true">Aa</b> A gentle focus on each word</span
+          ><span><b aria-hidden="true">◐</b> Your font, your atmosphere</span
+          ><span><b aria-hidden="true">↓</b> Read here. Take it with you.</span>
+        </div>
+      </section>
+      <section
+        id="target"
+        class="reader-view"
+        aria-label="Your reading edition"
+        hidden
+      >
+        <div class="reader-toolbar">
+          <button id="target-button" class="text-button" type="button">
+            <span aria-hidden="true">←</span> Back
+          </button>
+          <div class="document-info">
+            <h1 id="document-title">Your reading space</h1>
+            <span id="document-meta" class="muted"></span>
+          </div>
+          <button
+            id="settings-button"
+            class="secondary"
+            aria-expanded="false"
+            aria-controls="settings"
+            type="button"
+          >
+            Aa <span>Reading settings</span>
+          </button>
+        </div>
+        <div id="settings" class="settings-panel" hidden>
+          <div class="settings-heading">
+            <div>
+              <h2>Make yourself comfortable</h2>
+              <p>Changes apply as you read. Your preferences are saved.</p>
+            </div>
+            <button id="reset-settings" class="text-button" type="button">
+              Reset
+            </button>
+          </div>
+          <div class="settings-grid">
+            <label
+              >Font<select id="font-select">
+                <option value="sans">Everyday sans</option>
+                <option value="serif">Book serif</option>
+                <option value="humanist">Atkinson Hyperlegible</option>
+                <option value="mono">Monospace</option>
+                <option value="dyslexic">OpenDyslexic</option>
+              </select></label
+            >
+            <label
+              >Text size <span id="font-size-value"></span
+              ><input
+                id="font-size"
+                type="range"
+                min="14"
+                max="36"
+                step="1"
+                value="22"
+            /></label>
+            <label
+              >Line height<select id="line-height">
+                <option value="1.5">Compact</option>
+                <option value="1.8" selected>Comfortable</option>
+                <option value="2.1">Spacious</option>
+              </select></label
+            >
+            <label
+              >Letter spacing<select id="letter-spacing">
+                <option value="0">Natural</option>
+                <option value="0.4" selected>A little room</option>
+                <option value="1">More room</option>
+                <option value="1.8">Extra room</option>
+              </select></label
+            >
+            <label
+              >Word focus<select id="bolding-select">
+                <option value="0">Off</option>
+                <option value="0.33" selected>Gentle · first third</option>
+                <option value="0.5">Stronger · first half</option>
+              </select></label
+            >
+            <label
+              >Reading width<select id="reading-width">
+                <option value="56">Narrow</option>
+                <option value="70" selected>Balanced</option>
+                <option value="90">Wide</option>
+              </select></label
+            >
+          </div>
+          <fieldset class="theme-picker">
+            <legend>Atmosphere</legend>
+            <div class="theme-options">
+              <button type="button" data-theme="paper" aria-pressed="true">
+                <i></i>Paper</button
+              ><button type="button" data-theme="sepia" aria-pressed="false">
+                <i></i>Sepia</button
+              ><button type="button" data-theme="sage" aria-pressed="false">
+                <i></i>Sage</button
+              ><button type="button" data-theme="rose" aria-pressed="false">
+                <i></i>Rose</button
+              ><button type="button" data-theme="night" aria-pressed="false">
+                <i></i>Night</button
+              ><button type="button" data-theme="contrast" aria-pressed="false">
+                <i></i>Contrast
+              </button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="download-bar">
+          <span id="format-note"></span>
+          <div class="download-actions">
+            <label class="sr-only" for="export-format">Download format</label
+            ><select id="export-format"></select
+            ><button id="download-button" class="primary" type="button">
+              Download <span aria-hidden="true">↓</span></button
+            ><button
+              id="print-button"
+              class="icon-button"
+              type="button"
+              aria-label="Print reading edition"
+              title="Print reading edition"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                aria-hidden="true"
+              >
+                <path d="M7 8V3h10v5M7 17H4V8h16v9h-3M7 14h10v7H7z" />
+                <path d="M16 11h1" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="document-notice" class="notice" hidden></div>
+        <article
+          id="target-text"
+          class="reading-content"
+          aria-label="Document text"
+          tabindex="0"
+        ></article>
+        <div class="reader-end">Take your time. The words will wait.</div>
+      </section>
+      <div
+        id="status"
+        class="status"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
+      <div id="error" class="error" role="alert" hidden></div>
+    </main>
+    <footer>
+      <span class="wordmark small"><b>eazy</b>read.</span
+      ><span>A quieter place for your words.</span
+      ><span>No uploads. No account. Just reading.</span>
+    </footer>
+    <noscript
+      ><p class="error">
+        Enable JavaScript to use EazyRead. Files are processed locally in your
+        browser.
+      </p></noscript
+    >
+  </body>
 </html>

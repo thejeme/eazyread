@@ -1,23 +1,13 @@
-const CACHE_NAME = "eazyread-v1";
-const CORE_ASSETS = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./favicon.ico",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./icon.png",
-  "./og-image.png",
-  "./site.webmanifest"
-];
-
+importScripts("./assets/precache.js");
+const CACHE_PREFIX = `eazyread-${self.registration.scope}::`;
+const CACHE_NAME = CACHE_PREFIX + self.EAZYREAD_CACHE;
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(["./", ...self.EAZYREAD_ASSETS])),
   );
-  self.skipWaiting();
 });
-
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -25,47 +15,31 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key !== CACHE_NAME)
-            .map((key) => caches.delete(key))
-        )
+            .filter(
+              (key) =>
+                (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) ||
+                key === "eazyread-v1",
+            )
+            .map((key) => caches.delete(key)),
+        ),
       )
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   );
 });
-
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
+  if (
+    event.request.method !== "GET" ||
+    new URL(event.request.url).origin !== self.location.origin
+  )
     return;
-  }
-
-  const requestUrl = new URL(event.request.url);
-  if (requestUrl.origin !== self.location.origin) {
-    return;
-  }
-
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match("./index.html"))
-    );
-    return;
-  }
-
+  // Serve the HTML and code from the same release, including while a new worker installs.
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.ok) {
-          const responseClone = networkResponse.clone();
-          caches
-            .open(CACHE_NAME)
-            .then((cache) => cache.put(event.request, responseClone));
-        }
-
-        return networkResponse;
-      });
-    })
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const cached = await cache.match(event.request);
+      if (cached) return cached;
+      if (event.request.mode === "navigate")
+        return (await cache.match("./index.html")) || fetch(event.request);
+      return fetch(event.request);
+    }),
   );
 });

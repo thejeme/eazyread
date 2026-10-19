@@ -1,0 +1,26 @@
+{
+  "name": "eazyread",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs",
+    "test": "playwright test",
+    "check": "npm run build && npm test"
+  },
+  "dependencies": {
+    "dompurify": "3.4.17",
+    "jspdf": "4.2.1",
+    "jszip": "3.10.2",
+    "marked": "18.1.1",
+    "pdfjs-dist": "6.4.299"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "esbuild": "0.28.2"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}
